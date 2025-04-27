@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>五一假期申请</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #agree {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #disagree {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #emoji {
+            font-size: 64px;
+            transition: all 0.3s ease;
+            width: 80px;
+            text-align: center;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>五一提前放假申请</h1>
+    <div class="container">
+        <button id="disagree">不同意</button>
+        <div id="emoji">😐</div>
+        <button id="agree">同意</button>
+    </div>
+
+    <script>
+        const container = document.querySelector('.container');
+        const emoji = document.getElementById('emoji');
+        const agreeBtn = document.getElementById('agree');
+        const disagreeBtn = document.getElementById('disagree');
+
+        // 获取按钮位置信息
+        let agreeRect, disagreeRect;
+        
+        function updateButtonPositions() {
+            agreeRect = agreeBtn.getBoundingClientRect();
+            disagreeRect = disagreeBtn.getBoundingClientRect();
+        }
+
+        // 初始化按钮位置
+        updateButtonPositions();
+        
+        // 窗口大小变化时更新位置
+        window.addEventListener('resize', updateButtonPositions);
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            
+            // 计算到两个按钮中心的距离
+            const agreeCenter = agreeRect.left + agreeRect.width/2;
+            const disagreeCenter = disagreeRect.left + disagreeRect.width/2;
+            
+            // 计算距离比例（0-1）
+            const totalDistance = Math.abs(agreeCenter - disagreeCenter);
+            const position = (mouseX - disagreeCenter) / totalDistance;
+            
+            // 限制数值范围
+            const ratio = Math.max(0, Math.min(1, position));
+            
+            // 根据比例计算表情变化
+            const emojiStates = [
+                { value: '😠', rotate: -30 },
+                { value: '😖', rotate: -15 },
+                { value: '😐', rotate: 0 },
+                { value: '🙂', rotate: 15 },
+                { value: '😊', rotate: 30 }
+            ];
+            
+            const stateIndex = Math.round(ratio * (emojiStates.length - 1));
+            emoji.textContent = emojiStates[stateIndex].value;
+            emoji.style.transform = `rotate(${emojiStates[stateIndex].rotate}deg)`;
+        });
+
+        // 同意按钮点击事件
+        agreeBtn.addEventListener('click', () => {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.padding = '20px';
+            modal.style.backgroundColor = 'white';
+            modal.style.borderRadius = '10px';
+            modal.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+            modal.style.textAlign = 'center';
+            modal.innerHTML = '<h2>🎉 祝领导长命百岁！ 🎉</h2>';
+            
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                modal.remove();
+            }, 3000);
+        });
+
+        // 不同意按钮点击事件
+        disagreeBtn.addEventListener('click', () => {
+            const warning = document.createElement('div');
+            warning.style.position = 'fixed';
+            warning.style.top = '20px';
+            warning.style.left = '50%';
+            warning.style.transform = 'translateX(-50%)';
+            warning.style.padding = '15px';
+            warning.style.backgroundColor = '#ffeb3b';
+            warning.style.borderRadius = '5px';
+            warning.style.border = '2px solid #ffc107';
+            warning.textContent = '⚠️ 请再仔细考虑一次！';
+            
+            document.body.appendChild(warning);
+            
+            setTimeout(() => {
+                warning.remove();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
